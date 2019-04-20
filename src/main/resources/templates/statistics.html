@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>短链接生成</title>
+    <link rel="stylesheet" href="/lib/layui/css/layui.css">
+    <style>
+        html{
+            height: 100%;
+        }
+        body {
+            background: url("/image/background.jpg") no-repeat;
+            -webkit-background-size: cover;
+            background-size: cover;
+        }
+        .main{
+        padding-top: 10%;
+            
+        }
+        h1, h4 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .layui-card {
+            padding: 10px;
+        }
+
+        .tag {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-container main">
+
+    <div class="layui-row">
+        <div class="layui-col-sm8 layui-col-sm-offset2">
+            
+            <h1>
+                                        短链访问次数统计
+                <a href='/shortUrl/Statistics' > <button  class="layui-btn layui-btn-normal layui-btn-radius">访问统计</button> </a>
+                <a href='/' > <button  class="layui-btn layui-btn-normal layui-btn-radius">生成短链</button> </a>
+            </h1>
+            <h4>对短链访问次数进行统计，并且可以根据访问次数排序</h4>
+            <div class="layui-card">
+                <table id="demo" lay-filter="test"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/lib/layui/layui.js"></script>
+<script>
+  layui.use('table', function(){
+	  var table = layui.table;
+	  //第一个实例
+	  table.render({
+	    elem: '#demo',
+	    height: 480,
+	    url: '/shortUrl/list',//数据接口
+	    page: true, //开启分页
+	    cols: [
+	    	[ 
+	      {field: 'shortUrl', title: '短链接', width:200},
+	      {field: 'longUrl', title: '长连接', width:400},
+	      {field: 'count', title: '访问次数',  sort: true},
+	      //{field: 'wealth', title: '财富', width: 135, sort: true}
+	        ]
+	    ]
+	  });
+	  
+	});
+</script>
+</body>
+
+</html>

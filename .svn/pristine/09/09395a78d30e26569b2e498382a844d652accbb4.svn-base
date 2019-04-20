@@ -1,0 +1,52 @@
+package wo.shop.controller;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import wo.common.entity.WoPage;
+import wo.common.exception.WoResultCode;
+import wo.esys.po.Goods;
+import wo.esys.po.GoodsType;
+import wo.esys.vo.WoGrid;
+
+import wo.shop.service.GoodsTypeService;
+
+
+
+@Controller
+@RequestMapping("/esys/goodstype")
+
+public class GoodsTypeController {
+
+	
+	@Resource GoodsTypeService goodsTypeService;
+	
+	@GetMapping
+	public String toMain() {
+		return "esys/goodstype";
+	}
+	
+	@RequestMapping("/list")
+	@ResponseBody
+	WoGrid<GoodsType> typeList(Integer page,Integer rows,String searchContent) {
+
+		WoPage<GoodsType> goodsType = goodsTypeService.getTypePageData(page,rows,searchContent);
+		return new WoGrid<GoodsType>(goodsType.getResults(), goodsType.getRows());	
+	}
+	
+	
+	@RequestMapping("/create")
+	@ResponseBody
+	WoResultCode create(GoodsType gt) {
+		goodsTypeService.create(gt);
+		return WoResultCode.getSuccessCode().setMsg("创建商品类别成功！");
+
+	}
+	
+	
+	
+}

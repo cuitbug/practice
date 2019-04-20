@@ -1,0 +1,12 @@
+package wo.shop.repository;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+import wo.esys.po.Goods;
+
+
+public interface GoodInfoRepository extends PagingAndSortingRepository<Goods, String> {
+
+	
+	void deleteByIdIn(String[] id);
+}

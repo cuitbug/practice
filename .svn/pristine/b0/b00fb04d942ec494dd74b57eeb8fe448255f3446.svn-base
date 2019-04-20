@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wo.esys.mapper.RoleMapper">
+
+	<resultMap type="role" id="roleResultMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="description" property="description"/>
+		<collection property="menus" ofType="menu" autoMapping="true" columnPrefix="m_"></collection>
+	</resultMap>
+
+	<select id="findById" resultMap="roleResultMap">
+		select r.*, 
+		m.id as m_id, 
+		m.name as m_name 
+		from sys_role r
+		LEFT JOIN sys_role_menu rm on (r.id = rm.role_id)
+		LEFT JOIN sys_menu m on (rm.menu_id = m.id)
+		where r.id = #{id}
+	</select>
+	
+	<update id="update">
+		update sys_role set name = #{name}, description = #{description} where id = #{id};
+		delete from sys_role_menu where role_id = #{id};
+		insert into sys_role_menu (role_id, menu_id) values 
+		<foreach collection="menus" item="m" separator=",">
+			(#{id}, #{m.id})
+		</foreach>
+		 
+	</update>
+	
+	<insert id="create">
+		insert into sys_role (id, name, description) values (#{id}, #{name}, #{description});
+		<choose>
+			<when test="menus.size > 0">
+				insert into sys_role_menu (role_id, menu_id) values
+				<foreach collection="menus" item="m" separator=",">
+					(#{id}, #{m.id})
+				</foreach>
+			</when>
+		</choose>
+	</insert>
+	
+	<delete id="deleteByIds">
+		delete from sys_role_menu where role_id in 
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		;
+		delete from sys_role where id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach> 
+		
+	</delete>
+</mapper>

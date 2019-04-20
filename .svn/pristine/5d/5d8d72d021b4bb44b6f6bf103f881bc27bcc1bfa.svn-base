@@ -1,0 +1,71 @@
+package wo.esys.init;
+
+import java.util.Arrays;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import wo.common.util.WoUtil;
+import wo.esys.mapper.MenuMapper;
+import wo.esys.mapper.RoleMapper;
+import wo.esys.mapper.UserMapper;
+import wo.esys.po.Goods;
+import wo.esys.po.GoodsType;
+import wo.esys.po.Menu;
+import wo.esys.po.Role;
+import wo.esys.po.User;
+import wo.shop.mapper.GoodsMapper;
+import wo.shop.mapper.GoodsTypeMapper;
+import wo.shop.service.GoodsService;
+import wo.shop.service.GoodsTypeService;
+
+/**
+ * @author cailei
+ * @date Nov 4, 2018
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ESysInitializer2 {
+	
+	private final static Logger LOG = LogManager.getLogger(ESysInitializer2.class);
+
+	@Resource
+	private MenuMapper menuMapper;
+	
+	@Resource
+	private UserMapper userMapper;
+	
+	@Resource
+	private RoleMapper roleMapper;
+	
+	@Resource
+	private GoodsMapper goodsMapper;
+	
+	@Resource
+	private GoodsTypeMapper goodsTypeMapper;
+	
+	@Resource
+	private GoodsService goodsService;
+	
+	@Resource
+	private GoodsTypeService goodsTypeService;
+	
+
+	@Test
+	@Rollback(value = false)
+	public void save() {
+		GoodsType goodsType = new GoodsType();
+		goodsType.setId("1");
+		goodsType.setName("蛋糕");
+		goodsTypeService.create(goodsType);
+	}
+
+}

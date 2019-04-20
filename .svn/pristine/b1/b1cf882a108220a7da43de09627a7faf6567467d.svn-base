@@ -1,0 +1,14 @@
+package wo.esys.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import wo.esys.po.Role;
+
+
+@Mapper
+public interface RoleMapper {
+	
+	
+	void create(Role u);
+
+}

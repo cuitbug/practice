@@ -1,0 +1,60 @@
+{
+	"total": 2,
+	"rows": [
+		{
+			"id": "esys",
+			"name": "系统管理",
+			"no": "00",
+			"icon": null,
+			"url": null,
+			"parent": null,
+			"children": [],
+			"parentName": ""
+		},
+		{
+			"id": "esys-menu",
+			"name": "菜单",
+			"no": "0010",
+			"icon": null,
+			"url": "esys/menu",
+			"parent": {
+				"id": "esys",
+				"name": "系统管理",
+				"no": null,
+				"icon": null,
+				"url": null,
+				"parent": null,
+				"children": [],
+				"parentName": ""
+			},
+			"children": [],
+			"parentName": "系统管理"
+		}
+	]
+}
+
+
+
+{
+			"total":2,
+			"rows":[
+			
+			       {"id":"1",
+			       "name":"1",
+			       "count":1,
+			       "goodsType":
+			                   {"id":"1",
+			                   "name":"1",
+			                   "goods":null}
+			        },
+			        
+			       {"id":"2",
+			       "name":"2",
+			       "count":2,
+			       "goodsType":
+			                   {"id":"1",
+			                   "name":"1",
+			                   "goods":null}
+			       }
+			       ]
+ }

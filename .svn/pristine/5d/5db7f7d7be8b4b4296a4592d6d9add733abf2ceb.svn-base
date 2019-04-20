@@ -1,0 +1,41 @@
+package wo.shop.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+
+import wo.common.entity.WoPage;
+import wo.shop.mapper.GoodsTypeMapper;
+import wo.esys.po.GoodsType;
+
+
+import wo.shop.service.GoodsTypeService;
+@Transactional
+@Service
+public class GoodsTypeServiceImpl implements GoodsTypeService {
+
+	@Resource
+	private GoodsTypeMapper goodsTypeMapper;
+	
+	public WoPage<GoodsType> getTypePageData(Integer page, Integer rows, String searchContent) {
+
+		PageHelper.startPage(page, rows);
+		List<GoodsType> findAllBySearch = goodsTypeMapper.findAllgoodsType();
+		Page<GoodsType> p = (Page<GoodsType>)findAllBySearch;
+		return new WoPage<GoodsType>(p.getResult(),p.getTotal());
+	}
+	
+	public void create(GoodsType gt) {
+		goodsTypeMapper.create(gt);
+		
+	}
+	
+	
+
+}

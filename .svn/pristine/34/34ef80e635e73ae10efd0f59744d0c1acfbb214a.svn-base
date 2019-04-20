@@ -1,0 +1,65 @@
+package wo.esys.po;
+
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(name="sys_goodstype")
+public class GoodsType {
+	
+	@Id
+	@Column(length=50)
+	String id;
+	
+	@Column(length = 20)
+	String name;
+	
+	@OneToMany(mappedBy="goodsType")
+	List<Goods> goods;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<Goods> getGoods() {
+		return goods;
+	}
+
+	public void setGoods(List<Goods> goods) {
+		this.goods = goods;
+	}
+
+	public GoodsType() {
+		
+	}
+	
+	public GoodsType(String id, String name, List<Goods> goods) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.goods = goods;
+	}
+
+	
+	
+	
+}

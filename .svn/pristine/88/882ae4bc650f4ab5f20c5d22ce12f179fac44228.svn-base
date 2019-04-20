@@ -1,0 +1,29 @@
+package wo.shop.service;
+
+import wo.common.entity.WoPage;
+import wo.esys.po.Goods;
+
+
+
+public interface GoodsService {
+
+	WoPage<Goods> getPageData(Integer page, Integer pageSize, String searchContent);
+
+	void create(Goods g);
+
+	void update(Goods g);
+
+	void delete(String id);
+
+	
+//	WoPage<Menu> getPageData(Integer page, Integer pageSize, String searchContent);
+//
+//	void create(Menu m);
+//
+//	void update(Menu m);
+//
+//	void delete(String id);
+	
+	//getPageData()
+
+}

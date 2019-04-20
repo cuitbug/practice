@@ -1,0 +1,66 @@
+package wo.shop.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+
+import wo.common.entity.WoPage;
+import wo.common.util.WoUtil;
+import wo.shop.mapper.GoodsMapper;
+import wo.esys.po.Goods;
+
+import wo.shop.service.GoodsService;
+
+
+@Service
+@Transactional
+public class GoodsServiceImpl implements GoodsService {
+
+	
+	@Resource GoodsMapper goodsMapper;
+	
+	public WoPage<Goods> getPageData(Integer page, Integer pageSize, String searchContent) {
+		
+		PageHelper.startPage(page, pageSize);
+		List<Goods> findAllBySearch = goodsMapper.findAllBySearch(searchContent);
+		Page<Goods> p = (Page<Goods>)findAllBySearch;
+		return new WoPage<Goods>(p.getResult(),p.getTotal());
+		
+	}
+
+	public void create(Goods g) {
+		if (WoUtil.isEmpty(g.getId())) {
+			g.setId(WoUtil.uuid());
+		}
+		goodsMapper.create(g);
+		
+	}
+
+	public void update(Goods g) {
+		
+		goodsMapper.update(g);
+		
+	}
+
+	public void delete(String id) {
+		
+		goodsMapper.delete(id);
+		
+	}
+
+	
+
+	
+
+
+
+	
+
+}

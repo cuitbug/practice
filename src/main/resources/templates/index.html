@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>短链接生成</title>
+    <link rel="stylesheet" href="lib/layui/css/layui.css">
+    <style>
+        html{
+            height: 100%;
+        }
+        body {
+            background: url("/image/background.jpg") no-repeat;
+            -webkit-background-size: cover;
+            background-size: cover;
+        }
+        .main{
+            padding-top: 12%;
+        }
+        h1, h4 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .layui-card {
+            padding: 10px;
+        }
+
+        .tag {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-container main">
+
+    <div class="layui-row">
+        <div class="layui-col-sm8 layui-col-sm-offset2">
+            
+            <h1>
+                                        短链接生成
+                <a href='/shortUrl/Statistics' > <button  class="layui-btn layui-btn-normal layui-btn-radius">访问统计</button> </a>
+                <a href='/' > <button  class="layui-btn layui-btn-normal layui-btn-radius">生成短链</button> </a>
+            </h1>
+            <h4>对短链访问次数进行统计，并且可以根据访问次数排序</h4>
+            
+            <div class="layui-card">
+                <form class="layui-form" action="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">原始链接</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="longUrl" lay-verify="required|url" placeholder="请输入原始链接"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">生成方式</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="mode" value="1" title="随机字符" checked lay-filter="mode">
+                            <input type="radio" name="mode" value="0" title="自定义字符" lay-filter="mode">
+                        </div>
+                    </div>
+                    <hr>
+                   <div class="layui-form-item tag">
+                        <label class="layui-form-label">指定字符串</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="shortUrl" lay-verify="shortUrl" placeholder="请输入要设置的字符串"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">4~8个字符长度的数字、字母、数字和字母的组合</div>
+                    </div>
+                       
+                    <div class="layui-form-item">
+                        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="submit">生成</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="lib/layui/layui.js"></script>
+<script>
+
+
+    layui.use(['jquery', 'form'], function () {
+        var $ = layui.$,
+            form = layui.form,
+            mode = 1;
+
+        // 表单验证
+        form.verify({
+        	shortUrl: function (value, item) {
+                if (mode == 0 && !new RegExp("^[a-zA-Z0-9]{4,8}").test(value)) {
+                    return '自定义字符集只能为4~8个字符的数字或字母';
+                }
+            }
+
+            
+        });
+
+        //表单提交
+        form.on('submit(submit)', function (data) {
+        	  delete data.field['mode']
+              if (mode == 0) {
+                  delete data.field['generator']
+                  delete data.field['length']
+                  delete data.field['type']
+              } else if (mode == 1) {
+                  delete data.field['tag']
+              }
+            
+            
+            $.ajax({
+                url: "shortUrl/create"
+                , type: "POST"
+                , data: data.field
+                ,
+                success: function (data) {
+                    if (data.code == 200) {
+                        host = window.location.protocol + "//" + window.location.host + window.location.pathname.substr(0, window.location.pathname.lastIndexOf('/') + 1)
+                        host += data.content
+
+                        layer.open({
+                            title: '生成成功'
+                            , content: "<a href='" + host + "' target='_blank'>" + host + "</a>"
+                            , shade: 0.1,
+                            shadeClose: true
+                        });
+                    } else {
+                        layer.open({
+                            title: '生成失败'
+                            , content: data.msg
+                            , shade: 0.1,
+                            shadeClose: true
+                        });
+                    }
+                }
+                , error: function () {
+                    layer.open({
+                        title: '生成失败'
+                        , content: "请求服务器失败，请重试"
+                        , shade: 0.1,
+                        shadeClose: true
+                    });
+                }
+            })
+            return false;
+        });
+
+        form.on('radio(mode)', function (data) {
+            mode = data.value
+            if (data.value == 1) {
+                $(".tag").hide();
+                $("#sUrl").val("")
+               
+                
+            } else {
+            
+            	$("#sUrl").val("")
+                $(".tag").show();
+                
+            }
+        });
+        
+        
+        
+    });
+    
+   
+</script>
+</body>
+
+</html>

@@ -1,0 +1,255 @@
+<div style="padding: 5px 5px">
+	<!-- 1.列表 http://www.jeasyui.com/documentation/index.php# datagrid -->
+	<table id="dg-esysGoods" class="easyui-datagrid"
+		style="width: 100%; height: 500px" pagination="true" rownumbers="true"
+		fitColumns="true" singleSelect="true" toolbar="#toolbar-esysGoods">
+		<thead>
+			<tr>
+				<th field="id" width="100">ID</th>
+				<th field="name" width="30">名称</th>
+				<th field="count" width="100">库存</th>
+				<th field="goodsTypeName" width="30">上级</th>
+			</tr>
+		</thead>
+	</table>
+	<!-- datagrid工具栏 -->
+	<div id="toolbar-esysGoods">
+		<a class="easyui-linkbutton" iconCls="icon-add" plain="true"
+			onclick="loadEsysGoodsCreateForm()">创建</a> <a
+			class="easyui-linkbutton" iconCls="icon-edit" plain="true"
+			onclick="loadEsysGoodsUpdateForm()">修改</a> <a
+			class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+			onclick="deleteEsysGoods()">删除</a>
+	</div>
+	<!-- 创建按钮的弹出框 -->
+	<div id="dlg-esysGoods-create" class="easyui-dialog" title="创建菜单"
+		closed="true" style="width: 450px; height: 380px; padding: 10px 20px"
+		buttons="#btn-esysGoods-create">
+		<div class="ftitle">请输入商品信息</div>
+		<form id="fm-esysGoods-create" method="post">
+			<div class="fitem">
+				<label>ID:</label> <input name="id" class="easyui-textbox" 
+				  required="true"	   />
+			</div>
+			<div class="fitem">
+				<label>名称:</label> <input name="name" class="easyui-textbox"
+					 />
+			</div>
+
+
+			<div class="fitem">
+				<label>库存:</label> <input name="count" class="easyui-textbox" />
+			</div>
+			<div class="fitem">
+				<label>上级:</label>
+				<!-- idField:提交到后端的ID字段，textField:显示在下拉框中的名称 -->
+				<select id='selectEsysGoodsType' class="easyui-combogrid"
+					name="goodsType.id" style="width: 200px;"
+					data-options="
+						pagination:true,
+			            panelWidth:450,
+			            idField:'id',
+			            textField:'name',
+			            url:'/esys/goodstype/list',
+			            columns:[[
+			                {field:'id',title:'ID',width:100},
+			                {field:'name',title:'Name',width:150}
+			            ]]
+			        ">
+				</select>
+			</div>
+		</form>
+	</div>
+	<div id="btn-esysGoods-create">
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-ok" onclick="createEsysGoods ();" style="width: 90px">保存</a>
+		<a href="javascript:$('#dlg-esysGoods-create').dialog('close')"
+			class="easyui-linkbutton" iconCls="icon-cancel" style="width: 90px">取消</a>
+	</div>
+
+	<!-- 修改 -->
+	<div id="dlg-esysGoods-update" class="easyui-dialog" title="修改菜单"
+		closed="true" style="width: 450px; height: 380px; padding: 10px 20px"
+		buttons="#btn-esysGoods-update">
+		<div class="ftitle">请修改商品信息</div>
+		<form id="fm-esysGoods-update" method="post">
+			<div class="fitem">
+				<label>ID:</label> <input name="id" class="easyui-textbox" readonly />
+			</div>
+			<div class="fitem">
+				<label>库存:</label> <input name="count" class="easyui-textbox" />
+			</div>
+			<div class="fitem">
+				<label>名称:</label> <input name="name" class="easyui-textbox"
+					required="true" />
+			</div>
+
+
+			<div class="fitem">
+				<label>上级:</label>
+				<!-- idField:提交到后端的ID字段，textField:显示在下拉框中的名称 -->
+				<select class="easyui-combogrid" name="goodsType.id"
+					style="width: 200px;"
+					data-options="
+						pagination:true,
+			            panelWidth:450,
+			            idField:'id',
+			            textField:'name',
+			            url:'/esys/goodstype/list',
+			            columns:[[
+			                {field:'id',title:'ID',width:100},
+			                {field:'name',title:'Name',width:150}
+			            ]]
+			        ">
+				</select>
+			</div>
+		</form>
+
+	</div>
+	<div id="btn-esysGoods-update">
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-ok" onclick="updateEsysGoods();" style="width: 90px">保存</a>
+		<a href="javascript:$('#dlg-esysGoods-update').dialog('close')"
+			class="easyui-linkbutton" iconCls="icon-cancel" style="width: 90px">取消</a>
+	</div>
+
+</div>
+
+
+<!-- 4.所有按钮的点击响应事件 -->
+<script type="text/javascript">
+	
+
+	$('#dg-esysGoods').datagrid({
+		url : "esys/goods/list"
+	});
+
+	// 响应创建按钮的点击事件
+	
+	function loadEsysGoodsCreateForm() {
+		$('#dlg-esysGoods-create').dialog('open');
+		$('#fm-esysGoods-create').form('clear');
+	}
+
+	// 提交创建页面数据
+	function createEsysGoods() {
+		$('#fm-esysGoods-create').form('submit', {
+			url : 'esys/goods/create',
+			onSubmit : function() {
+				return $(this).form('validate');
+			},
+			success : function(result) {
+				console.log('result:' + result);
+				try {
+					result = eval('(' + result + ')');
+					if (result.success == false) {
+						$.messager.alert({ // show error message
+							title : '错误',
+							icon : 'error',
+							msg : result.msg
+						});
+					} else {
+						$('#dlg-esysGoods-create').dialog('close');
+						$('#dg-esysGoods').datagrid('reload');
+					}
+				} catch (e) {
+					$.messager.alert({ // show error message
+						title : '错误',
+						icon : 'error',
+						msg : '创建商品失败！'
+					});
+				}
+			}
+		});
+	}
+
+	
+	function loadEsysGoodsUpdateForm() {
+		var row = $('#dg-esysGoods').datagrid('getSelected');
+		if (row) {
+			$('#dlg-esysGoods-update').dialog('open');
+			if (row.goodsType) {
+				row["goodsType.id"] = row.goodsType.id;
+			}
+			$('#fm-esysGoods-update').form('load', row);
+		} else {
+			$.messager.alert({
+				icon : 'warning',
+				title : '警告',
+				msg : '请选择一行记录！'
+			});
+		}
+	}
+
+	function updateEsysGoods() {
+		$('#fm-esysGoods-update').form('submit', {
+			url : 'esys/goods/update',
+			onSubmit : function () {
+				return $(this).form ('validate');
+			},
+			success : function(result) {
+				console.log('result:' + result);
+				try {
+					result = eval('(' + result + ')');
+					if (result.success == false) {
+						$.messager.alert({ // show error message
+							title : '错误',
+							icon : 'error',
+							msg : result.msg
+						});
+					} else {
+						// 关闭对话框
+						$('#dlg-esysGoods-update').dialog('close');
+						// datagrid刷新
+						$('#dg-esysGoods').datagrid('reload');
+					}
+				} catch (e) {
+					$.messager.alert({ // show error message
+						title : '错误',
+						icon : 'error',
+						msg : '修改菜单失败！'
+					});
+				}
+			}
+		});
+	}
+	
+	
+	function deleteEsysGoods(){
+		
+		var row = $('#dg-esysGoods').datagrid ('getSelected');
+		// 如果row有值，需要用户确认是否删除
+		if (row) {
+			$.messager.confirm ('请确认', '该操作不可恢复，请确认是否要执行！', function (r) {
+				if (r) {// r == true表示用户点击了确认按钮，否则用户点击了取消
+					// ajax请求
+					$.post ('esys/goods/delete', {id : row.id}, function (result) {
+						if (result.success == true) {
+							$('#dg-esysGoods').datagrid ('reload');
+						} else {
+							$.messager.alert({ // show error message
+								title : '错误',
+								icon : 'error',
+								msg : result.msg
+							});
+						}
+					});
+				}
+			});
+		// 如果row没有值，则提示用户
+		} else {
+			$.messager.alert({ // show error message
+				title : '警告',
+				icon : 'warning',
+				msg : '请选择一个菜单！'
+			});
+		}
+		
+		
+		
+	}
+	
+
+
+	
+</script>

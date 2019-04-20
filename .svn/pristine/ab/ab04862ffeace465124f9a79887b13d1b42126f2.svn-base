@@ -1,0 +1,182 @@
+package wo.esys.init;
+
+import java.util.Arrays;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import wo.common.util.WoUtil;
+import wo.esys.mapper.MenuMapper;
+import wo.esys.mapper.RoleMapper;
+import wo.esys.mapper.UserMapper;
+import wo.esys.po.Goods;
+import wo.esys.po.GoodsType;
+import wo.esys.po.Menu;
+import wo.esys.po.Role;
+import wo.esys.po.User;
+import wo.shop.mapper.GoodsMapper;
+import wo.shop.mapper.GoodsTypeMapper;
+
+/**
+ * @author cailei
+ * @date Nov 4, 2018
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ESysInitializer {
+	
+	private final static Logger LOG = LogManager.getLogger(ESysInitializer.class);
+
+	@Resource
+	private MenuMapper menuMapper;
+	
+	@Resource
+	private UserMapper userMapper;
+	
+	@Resource
+	private RoleMapper roleMapper;
+	
+	@Resource
+	private GoodsMapper goodsMapper;
+	
+	@Resource
+	private GoodsTypeMapper goodsTypeMapper;
+
+	@Test
+	@Rollback(value = false)
+	@Transactional
+	public void save() {
+		Menu esys = new Menu ("esys", "系统管理", "00", null, null, null);
+		menuMapper.create(esys);
+		Menu menu = new Menu ("esys-menu", "菜单", "0010", null, "esys/menu", esys);
+		menuMapper.create(menu);
+		
+		
+		
+		Menu shop = new Menu ("shop", "商城管理", "10", null, null, null);
+		menuMapper.create(shop);
+		
+		Menu gStype = new Menu ("shop-gStype", "商品类别", "1010", null, "esys/goodstype", shop);
+		menuMapper.create(gStype);
+		Menu goods = new Menu ("shop-goods", "商品", "1020", null, "esys/goods", shop);
+		menuMapper.create(goods);
+		Menu order = new Menu ("shop-order", "订单", "1030", null, "esys/order", shop);
+		menuMapper.create(order);
+		Menu allCus = new Menu ("shop-allCus", "顾客", "1040", null, "esys/curtomer", shop);
+		menuMapper.create(allCus);
+		
+		
+		Menu cus = new Menu ("cus", "个人管理", "20", null, null, null);
+		menuMapper.create(cus);
+		Menu address = new Menu ("cus-address", "地址", "2010", null, "esys/goods", cus);
+		menuMapper.create(address);
+		Menu myOrder = new Menu ("cus-myorder", "我的订单", "2020", null, "esys/goods", cus);
+		menuMapper.create(myOrder);
+		
+		Role rAdmin = new Role ();
+		rAdmin.setId("admin");
+		rAdmin.setName("系统管理员");
+		this.roleMapper.create(rAdmin);
+		
+		User uAdmin = new User ();
+		uAdmin.setId("admin");
+		uAdmin.setLoginName("admin");
+		uAdmin.setPassword(WoUtil.getMD5(uAdmin.getId(), "123456"));
+		uAdmin.setRoles(Arrays.asList(rAdmin));
+		this.userMapper.create(uAdmin);
+		
+		
+		Role rManager = new Role ();
+		rManager.setId("manager");
+		rManager.setName("管理者");
+		rManager.setMenus(Arrays.asList(shop,goods,order,allCus));
+		this.roleMapper.create(rManager);
+		
+		User uManager = new User ();
+		uManager.setId("manager");
+		uManager.setLoginName("manager");
+		uManager.setPassword(WoUtil.getMD5(uManager.getId(), "123456"));
+		uManager.setRoles(Arrays.asList(rManager));
+		this.userMapper.create(uManager);
+		
+		
+		Role rCus = new Role ();
+		rCus.setId("customer");
+		rCus.setName("顾客");
+		rCus.setMenus(Arrays.asList(cus,address,myOrder));
+		this.roleMapper.create(rCus);
+		
+		User uCus = new User ();
+		uCus.setId("customer");
+		uCus.setLoginName("customer");
+		uCus.setPassword(WoUtil.getMD5(uCus.getId(), "123456"));
+		uCus.setRoles(Arrays.asList(rCus));
+		this.userMapper.create(uCus);
+		
+		
+		GoodsType gt = new GoodsType();
+		gt.setId("1");
+		gt.setName("蛋糕");
+		this.goodsTypeMapper.create(gt);
+		
+		
+		Goods g = new Goods();
+		g.setId("1");
+		g.setName("蛋黄派");
+		g.setCount(20);
+		g.setGoodsType(gt);
+		this.goodsMapper.create(g);
+		
+		Goods g2 = new Goods();
+		g2.setId("2");
+		g2.setName("港荣蒸蛋糕");
+		g2.setCount(20);
+		g2.setGoodsType(gt);
+		this.goodsMapper.create(g2);
+		
+		
+		GoodsType gt2 = new GoodsType();
+		gt2.setId("2");
+		gt2.setName("饼干");
+		this.goodsTypeMapper.create(gt2);
+		
+		
+		Goods g3 = new Goods();
+		g3.setId("3");
+		g3.setName("奥利奥饼干");
+		g3.setCount(20);
+		g3.setGoodsType(gt2);
+		this.goodsMapper.create(g3);
+		
+		
+		GoodsType gt3 = new GoodsType();
+		gt3.setId("3");
+		gt3.setName("汽水");
+		this.goodsTypeMapper.create(gt3);
+		
+		
+		Goods g4 = new Goods();
+		g4.setId("4");
+		g4.setName("可乐");
+		g4.setCount(20);
+		g4.setGoodsType(gt3);
+		this.goodsMapper.create(g4);
+		
+		Goods g5 = new Goods();
+		g5.setId("5");
+		g5.setName("雪碧");
+		g5.setCount(20);
+		g5.setGoodsType(gt3);
+		this.goodsMapper.create(g5);
+			
+	}
+
+}

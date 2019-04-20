@@ -1,0 +1,26 @@
+package wo.shop.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import wo.esys.po.Goods;
+
+
+
+
+@Mapper
+public interface GoodsMapper {
+	
+	
+	List<Goods> findAllBySearch(@Param("search")String searchContent);
+
+	void create(Goods g);
+
+	void update(Goods g);
+
+	void delete(String id);
+
+	
+}

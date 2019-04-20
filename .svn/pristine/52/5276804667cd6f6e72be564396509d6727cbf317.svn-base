@@ -1,0 +1,26 @@
+package wo.shop.service;
+
+import wo.common.entity.WoPage;
+import wo.esys.po.GoodsType;
+
+
+
+public interface GoodsTypeService {
+
+	
+
+	WoPage<GoodsType> getTypePageData(Integer page, Integer rows, String searchContent);
+
+	void create(GoodsType gt);
+
+//	WoPage<Menu> getPageData(Integer page, Integer pageSize, String searchContent);
+//
+//	void create(Menu m);
+//
+//	void update(Menu m);
+//
+//	void delete(String id);
+	
+	//getPageData()
+
+}

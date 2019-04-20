@@ -1,0 +1,13 @@
+package wo.esys.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import wo.esys.po.User;
+
+@Mapper
+public interface UserMapper {
+	
+	User findByLoginName(String user);
+	void create(User u);
+
+}

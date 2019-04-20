@@ -1,0 +1,207 @@
+<div style="padding: 5px 5px">
+	<!-- 1.列表 http://www.jeasyui.com/documentation/index.php# datagrid -->
+	<table id="dg-esysGoodsType" class="easyui-datagrid"
+		style="width: 100%; height: 500px" pagination="true" rownumbers="true"
+		fitColumns="true" singleSelect="true" toolbar="#toolbar-esysGoodstype">
+		<thead>
+			<tr>
+				<th field="id" width="100">ID</th>
+				<th field="name" width="30">名称</th>
+
+			</tr>
+		</thead>
+	</table>
+	<!-- datagrid工具栏 -->
+	<div id="toolbar-esysGoodstype">
+		<a class="easyui-linkbutton" iconCls="icon-add" plain="true"
+			onclick="loadEsysGoodstypeCreateForm()">创建</a> <a
+			class="easyui-linkbutton" iconCls="icon-edit" plain="true"
+			onclick="loadEsysGoodstypeUpdateForm()">修改</a> <a
+			class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+			onclick="deleteEsysGoodstype()">删除</a>
+	</div>
+	<!-- 创建按钮的弹出框 -->
+	<div id="dlg-esysGoodstype-create" class="easyui-dialog" title="创建菜单"
+		closed="true" style="width: 450px; height: 380px; padding: 10px 20px"
+		buttons="#btn-esysGoodstype-create">
+		<div class="ftitle">请输入商品类别信息</div>
+		<form id="fm-esysGoodstype-create" method="post">
+			<div class="fitem">
+				<label>ID:</label> <input name="id" class="easyui-textbox" 
+				  required="true"	   />
+			</div>
+			<div class="fitem">
+				<label>名称:</label> <input name="name" class="easyui-textbox"
+					 />
+			</div>
+		</form>
+	</div>
+	<div id="btn-esysGoodstype-create">
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-ok" onclick="createEsysGoodstype ();" style="width: 90px">保存</a>
+		<a href="javascript:$('#dlg-esysGoodstype-create').dialog('close')"
+			class="easyui-linkbutton" iconCls="icon-cancel" style="width: 90px">取消</a>
+	</div>
+
+	<!-- 修改 -->
+	<div id="dlg-esysGoodstype-update" class="easyui-dialog" title="修改菜单"
+		closed="true" style="width: 450px; height: 380px; padding: 10px 20px"
+		buttons="#btn-esysGoodstype-update">
+		<div class="ftitle">请修改商品信息</div>
+		<form id="fm-esysGoodstype-update" method="post">
+			<div class="fitem">
+				<label>ID:</label> <input name="id" class="easyui-textbox" readonly />
+			</div>
+			<div class="fitem">
+				<label>名称:</label> <input name="name" class="easyui-textbox" />
+			</div>
+		</form>
+
+	</div>
+	<div id="btn-esysGoodstype-update">
+		<a href="javascript:void(0)" class="easyui-linkbutton"
+			iconCls="icon-ok" onclick="updateEsysGoodstype();" style="width: 90px">保存</a>
+		<a href="javascript:$('#dlg-esysGoodstype-update').dialog('close')"
+			class="easyui-linkbutton" iconCls="icon-cancel" style="width: 90px">取消</a>
+	</div>
+
+</div>
+
+
+<!-- 4.所有按钮的点击响应事件 -->
+<script type="text/javascript">
+	
+
+	$('#dg-esysGoodsType').datagrid({
+		url : "esys/goodstype/list"
+	});
+
+	// 响应创建按钮的点击事件
+	
+	function loadEsysGoodstypeCreateForm() {
+		$('#dlg-esysGoodstype-create').dialog('open');
+		$('#fm-esysGoodstype-create').form('clear');
+	}
+
+	// 提交创建页面数据
+	function createEsysGoodstype() {
+		$('#fm-esysGoodstype-create').form('submit', {
+			url : 'esys/goodstype/create',
+			onSubmit : function() {
+				return $(this).form('validate');
+			},
+			success : function(result) {
+				console.log('result:' + result);
+				try {
+					result = eval('(' + result + ')');
+					if (result.success == false) {
+						$.messager.alert({ // show error message
+							title : '错误',
+							icon : 'error',
+							msg : result.msg
+						});
+					} else {
+						$('#dlg-esysGoodstype-create').dialog('close');
+						$('#dg-esysGoodsType').datagrid('reload');
+					}
+				} catch (e) {
+					$.messager.alert({ // show error message
+						title : '错误',
+						icon : 'error',
+						msg : '创建商品失败！'
+					});
+				}
+			}
+		});
+	}
+
+	
+	function loadEsysGoodstypeUpdateForm() {
+		var row = $('#dg-esysGoodsType').datagrid('getSelected');
+		if (row) {
+			$('#dlg-esysGoodstype-update').dialog('open');
+			if (row.goodsType) {
+				row["goodsType.id"] = row.goodsType.id;
+			}
+			$('#fm-esysGoodstype-update').form('load', row);
+		} else {
+			$.messager.alert({
+				icon : 'warning',
+				title : '警告',
+				msg : '请选择一行记录！'
+			});
+		}
+	}
+
+	function updateEsysGoodstype() {
+		$('#fm-esysGoodstype-update').form('submit', {
+			url : 'esys/goodstype/update',
+			onSubmit : function () {
+				return $(this).form ('validate');
+			},
+			success : function(result) {
+				console.log('result:' + result);
+				try {
+					result = eval('(' + result + ')');
+					if (result.success == false) {
+						$.messager.alert({ // show error message
+							title : '错误',
+							icon : 'error',
+							msg : result.msg
+						});
+					} else {
+						// 关闭对话框
+						$('#dlg-esysGoodstype-update').dialog('close');
+						// datagrid刷新
+						$('#dg-esysGoodsType').datagrid('reload');
+					}
+				} catch (e) {
+					$.messager.alert({ // show error message
+						title : '错误',
+						icon : 'error',
+						msg : '修改菜单失败！'
+					});
+				}
+			}
+		});
+	}
+	
+	
+	function deleteEsysGoodstype(){
+		
+		var row = $('#dg-esysGoodsType').datagrid ('getSelected');
+		// 如果row有值，需要用户确认是否删除
+		if (row) {
+			$.messager.confirm ('请确认', '该操作不可恢复，请确认是否要执行！', function (r) {
+				if (r) {// r == true表示用户点击了确认按钮，否则用户点击了取消
+					// ajax请求
+					$.post ('esys/goodstype/delete', {id : row.id}, function (result) {
+						if (result.success == true) {
+							$('#dg-esysGoodsType').datagrid ('reload');
+						} else {
+							$.messager.alert({ // show error message
+								title : '错误',
+								icon : 'error',
+								msg : result.msg
+							});
+						}
+					});
+				}
+			});
+		// 如果row没有值，则提示用户
+		} else {
+			$.messager.alert({ // show error message
+				title : '警告',
+				icon : 'warning',
+				msg : '请选择一个菜单！'
+			});
+		}
+		
+		
+		
+	}
+	
+
+
+	
+</script>

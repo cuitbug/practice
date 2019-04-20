@@ -1,0 +1,75 @@
+package wo.esys.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import wo.common.exception.WoException;
+import wo.common.util.WoUtil;
+import wo.esys.mapper.MenuMapper;
+import wo.esys.mapper.UserMapper;
+import wo.esys.po.Menu;
+import wo.esys.po.User;
+import wo.esys.service.CoreService;
+import wo.esys.util.ESysConstant;
+import wo.esys.vo.WoUser;
+
+@Transactional
+@Service
+public class CoreServiceImpl implements CoreService {
+
+	@Resource
+	private MenuMapper menuMapper;
+	
+	@Resource
+	private UserMapper userMapper;
+	
+	public List<Menu> findChildren(String parentId, WoUser woUser) {
+		// 获取角色id数组
+		String[] rIds = woUser.getRolesId().split(",");
+		// 判断当前用户是否具有admin权限
+		Boolean isAdmin = false;
+		for (String rId : rIds) {
+			if (WoUtil.isEmpty(rId)) {
+				throw new WoException (ESysConstant.ERR_USER_ROLE);
+			}
+			if (rId.equals("admin")) {
+				isAdmin = true;
+			}
+		}
+		// 查询所有子菜单
+		List<Menu> allChildMenus = menuMapper.findAllByParentId(parentId);
+		// 如果是admin，则返回所有菜单
+		if (isAdmin) {
+			return allChildMenus;
+		}
+		// 如果不是admin，则查询当前用户的角色关联的菜单newMenus
+		List<String> mIds = menuMapper.findIdsByRoleIds(rIds);
+		List<Menu> newMenus = new ArrayList<Menu>();
+		for (Menu m : allChildMenus) {
+			if (mIds.contains(m.getId())) {
+				newMenus.add(m);
+			}
+		}
+		return newMenus;
+	}
+
+	public WoUser authenticate(String user, String password) {
+		
+		User u = userMapper.findByLoginName(user);
+		if(u == null) {
+			throw new WoException(ESysConstant.ERR_LOGIN);
+		}
+		String Md5 = WoUtil.getMD5(u.getId(), password);
+		if(!Md5.equals(u.getPassword())) {
+			System.out.println(Md5+"-----"+u.getPassword());
+			throw new WoException(ESysConstant.ERR_USER_PWD);			
+		}
+		return new WoUser(u);
+	
+	}	
+}
